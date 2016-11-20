@@ -3,7 +3,7 @@
 
 #define MAX 1000
 
-int b,c;
+int a,b,c;
 int lines[10];
 int *a;
 char f;
@@ -13,13 +13,14 @@ float hello;
 
 void hudai()
 {
-	int i;
 
-	for(i=0; i<5; i++)
+	for(int i=0; i<5; i++)
 	{
-		printf("hudai");
+		cout << "this is " << i << endl;
 	}
 
+	cout << endl;
+	cout << endl;
 }
 
 void ajaira()
@@ -36,9 +37,9 @@ int main()
 	printf("Hello World");
 
 	for(int i=0;i<10;i++){
-		printf("my name is zim");
+		cout<<"my name is zim";
 		if(MAX<i){
-			printf("Impossible");
+			cout<<"impossible"<<endl;
 		}
 	}
 
