@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdio>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -208,6 +209,40 @@ void trim()
 }
 
 
+vector<string> functions;
+map<string,bool> functions_map;
+
+void extract_functions(){
+    for(int i=0;i<tree[0].size();i++){
+        node temp = noded_code[tree[0][i]];
+        string st="";
+        if(temp.type==function){
+            cout<<temp.code_segment<<endl;
+            if(temp.code_segment[temp.code_segment.length()-1]!=')'){
+                temp.code_segment.erase(temp.code_segment.length()-1,1);
+            }
+            bool flag = false;
+            for(int j=0;temp.code_segment[j]!='(';j++){
+                if(temp.code_segment[j]==' ') {
+                    flag=true;
+                    continue;
+                }
+                if(flag) st+=temp.code_segment[j];
+            }
+            functions.pb(st);
+            functions_map[st]=true;
+
+        }
+    }
+    cout<<endl;
+    cout<<"Functions:"<<endl;
+    for(int i=0;i<functions.size();i++){
+        cout<<functions[i]<<endl;
+    }
+}
+
+
+
 
 vector<string> global_variable;
 
@@ -260,12 +295,12 @@ void parse_global_variable(string line){
 }
 
 
-int extract_global_variable(){
+void extract_global_variable(){
     cout<<"started extraction"<<endl;
 	for(int i=0;i<tree[0].size();i++){
 		int pos = tree[0][i];
 		node temp = noded_code[pos];
-        cout<<temp.type<< ' '<<temp.code_segment<<endl;
+//        cout<<temp.type<< ' '<<temp.code_segment<<endl;
 		if(temp.type == statement && temp.code_segment[temp.code_segment.length()-2]!=')'){
 			parse_global_variable(temp.code_segment);
 		}
@@ -278,6 +313,58 @@ int extract_global_variable(){
 	}
 }
 
+vector<int> fun_mat[MAX];
+
+void function_matrix()
+{
+    cout<<"Function matrix started"<<endl;
+
+    for(int i=0;i<tree[0].size();i++){
+        node temp = noded_code[tree[0][i]];
+        if(temp.type==function){
+            queue<node> q;
+            q.push(temp);
+            while(!q.empty()){
+                node top=q.front();
+                q.pop();
+//                cout<<top.code_segment<<"-> ";
+                for(int j=0;j<tree[top.pos].size();j++){
+                    node child = noded_code[tree[top.pos][j]];
+//                    cout<<child.code_segment<<' '<<child.type<<',';
+                    if(child.type==statement && child.code_segment[child.code_segment.length()-2]==')'){
+
+                        string x="";
+                        for(int k=0;k<child.code_segment.length();k++){
+                            if(child.code_segment[k]=='('){
+                                if(functions_map.find(x)!=functions_map.end()){
+                                    fun_mat[top.pos].pb(child.pos);
+                                    break;
+                               }
+                            }
+                            x+=child.code_segment[k];
+                        }
+
+
+                    }
+                    q.push(child);
+                }
+//                cout<<endl;
+            }
+        }
+    }
+    cout<<endl;
+    for(int i = 0 ;i<tree[0].size();i++){
+        node temp = noded_code[tree[0][i]];
+
+        if(temp.type==function){
+            cout<<temp.code_segment<<" -> ";
+            for(int j=0;j<fun_mat[temp.pos].size();j++){
+                cout<<noded_code[fun_mat[temp.pos][j]].code_segment <<' ';
+            }
+            cout<<endl;
+        }
+    }
+}
 
 
 
@@ -293,6 +380,9 @@ int main()
     trim();
     generate_tree();
     extract_global_variable();
+
+    extract_functions();
+    function_matrix();
 
     myFile.close();
 

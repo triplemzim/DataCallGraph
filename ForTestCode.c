@@ -10,11 +10,15 @@ char f;
 double hgj;
 float hello;
 
-
-void hudai()
+void haha(int x,int y)
 {
-	int i;
+    printf("hellow waorld");
 
+}
+
+void hudai(){
+	int i;
+    haha(4,10);
 	for(i=0; i<5; i++)
 	{
 		printf("hudai");
@@ -41,6 +45,9 @@ int main()
 			printf("Impossible");
 		}
 	}
+	ajaira();
+	int a;
+	hudai();
 
 	return 0;
 }
