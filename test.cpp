@@ -48,6 +48,11 @@ bool isChar(char x){
 	return false;
 }
 
+
+bool pureisChar(char x){
+	if((x>='A' && x<='Z') || (x>='a' && x<='z')) return true;
+    return false;
+}
 bool starts_with(string x,string with){
 	if(x.size()>with.size()) return false;
 
@@ -367,6 +372,84 @@ void function_matrix()
     }
 }
 
+map<string,vector<int> > variable_read;
+map<string, vector<int> > variable_write;
+
+void variable_matrix(string var)
+{
+    cout<<"variable matrix generation started..."<<endl;
+
+
+    for(int i=0;i<tree[0].size();i++){
+        node temp = noded_code[tree[0][i]];
+        if(temp.type==function){
+            queue<node> q;
+
+            q.push(temp);
+            while(!q.empty()){
+                node top = q.front();
+//                cout<<top.code_segment<<endl;
+                q.pop();
+                bool flag= false;
+                for(int j=0;j<tree[top.pos].size();j++){
+                    node child = noded_code[tree[top.pos][j]];
+                    q.push(child);
+                    if(child.type==statement){
+                        int idx = child.code_segment.find(var);
+                        if(idx==0){
+                            if(pureisChar(child.code_segment[var.length()])==false){
+                                variable_write[var].pb(tree[0][i]);
+                                flag=true;
+                                break;
+                            }
+                        }
+                        idx = child.code_segment.find(var);
+                        string x = child.code_segment;
+                        while(idx<MAX && idx > -1){
+                            if(pureisChar(child.code_segment[idx+var.length()])==false && pureisChar(child.code_segment[idx-1])==false){
+                                variable_read[var].pb(tree[0][i]);
+                                flag = true;
+                                break;
+                            }
+                            x = x.substr(idx+var.length());
+                            idx = x.find(var);
+                            cout<<idx<<endl;
+                        }
+                    }
+                }
+                if(flag) break;
+            }
+        }
+    }
+
+
+}
+
+
+void generate_variable_mat(){
+    for(int i=0;i<global_variable.size();i++){
+        variable_matrix(global_variable[i]);
+    }
+    cout<<endl;
+    cout<<"read"<<endl;
+    for(int i=0;i<global_variable.size();i++){
+        cout<<global_variable[i]<<" -> ";
+        for(int j=0;j<variable_read[global_variable[i]].size();j++){
+            cout<<noded_code[variable_read[global_variable[i]][j]].code_segment<<' ';
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+    cout<<"Write"<<endl;
+    for(int i=0;i<global_variable.size();i++){
+        cout<<global_variable[i]<<" -> ";
+        for(int j=0;j<variable_write[global_variable[i]].size();j++){
+            cout<<noded_code[variable_write[global_variable[i]][j]].code_segment<<' ';
+        }
+        cout<<endl;
+    }
+}
+
 
 
 
@@ -384,6 +467,7 @@ int main()
 
     extract_functions();
     function_matrix();
+    generate_variable_mat();
 
     myFile.close();
 

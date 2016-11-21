@@ -19,6 +19,7 @@ void haha(int x,int y)
 void hudai(){
 	int i;
     haha(4,10);
+    b = 0;
 	for(i=0; i<5; i++)
 	{
 		printf("hudai");
@@ -31,7 +32,7 @@ void ajaira()
 {
 
 	lines[5] = 45;
-
+    printf("%d",b);
 	hudai();
 }
 
@@ -46,7 +47,8 @@ int main()
 		}
 	}
 	ajaira();
-	int a;
+	a=b;
+	b=c;
 	hudai();
 
 	return 0;
