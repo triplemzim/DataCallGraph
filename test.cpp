@@ -211,6 +211,7 @@ void trim()
 
 vector<string> functions;
 map<string,bool> functions_map;
+map<string,string> functions_name;
 
 void extract_functions(){
     for(int i=0;i<tree[0].size();i++){
@@ -231,7 +232,7 @@ void extract_functions(){
             }
             functions.pb(st);
             functions_map[st]=true;
-
+            functions_name[temp.code_segment]=st;
         }
     }
     cout<<endl;
