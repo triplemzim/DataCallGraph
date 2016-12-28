@@ -100,6 +100,8 @@ node create_node(string line){
 	temp.pos = node_idx++;
 	temp.code_segment=line;
 
+    cout<<"Create node: "<<line<<' ';
+
 	if(starts_with("#include",line)==true){
 		temp.type="header";
 	}
@@ -126,6 +128,7 @@ node create_node(string line){
 			temp.type = "function";
 		}
 	}
+    cout<<temp.type<<endl;
 	return temp;
 
 }
@@ -162,6 +165,7 @@ void generate_tree(){
 			noded_code[i].parent = cur;
 			tree[cur].pb(temp.pos);
 			cur = temp.pos;
+            cout<<temp.code_segment<<' '<<temp.type<<endl;
 		}
 		else if(temp.type == "close_brace"){
 			cur = noded_code[cur].parent;
@@ -324,26 +328,32 @@ vector<int> fun_mat[MAX];
 void function_matrix()
 {
     cout<<"Function matrix started"<<endl;
-
+    node pushing_top;
     for(int i=0;i<tree[0].size();i++){
         node temp = noded_code[tree[0][i]];
         if(temp.type==function){
+            // cout<<temp.code_segment<<endl;
             queue<node> q;
             q.push(temp);
             while(!q.empty()){
                 node top=q.front();
+                if(top.type==function){
+                    pushing_top=top;
+                }
                 q.pop();
 //                cout<<top.code_segment<<"-> ";
                 for(int j=0;j<tree[top.pos].size();j++){
                     node child = noded_code[tree[top.pos][j]];
-//                    cout<<child.code_segment<<' '<<child.type<<',';
+                    // cout<<child.code_segment<<' '<<child.type<<',';
                     if(child.type==statement && child.code_segment[child.code_segment.length()-2]==')'){
-
+                        cout<<child.code_segment<<endl;
                         string x="";
                         for(int k=0;k<child.code_segment.length();k++){
                             if(child.code_segment[k]=='('){
+
                                 if(functions_map.find(x)!=functions_map.end()){
-                                    fun_mat[top.pos].pb(child.pos);
+                                    // cout<<top.code_segment<<' '<<top.type<<" paici"<<endl;
+                                    fun_mat[pushing_top.pos].pb(child.pos);
                                     break;
                                }
                             }
@@ -354,7 +364,7 @@ void function_matrix()
                     }
                     q.push(child);
                 }
-//                cout<<endl;
+               // cout<<endl;
             }
         }
     }
@@ -363,7 +373,7 @@ void function_matrix()
         node temp = noded_code[tree[0][i]];
 
         if(temp.type==function){
-            cout<<temp.code_segment<<" -> ";
+            cout<<fun_mat[temp.pos].size()<<' '<<temp.code_segment<<" -> ";
             for(int j=0;j<fun_mat[temp.pos].size();j++){
                 cout<<noded_code[fun_mat[temp.pos][j]].code_segment <<' ';
             }
@@ -457,7 +467,7 @@ void generate_variable_mat(){
 int main()
 {
 
-	myFile.open("ForTestCode.c");
+	myFile.open("a.c");
 
 	store();
     // printVector();

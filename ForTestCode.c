@@ -16,7 +16,8 @@ void haha(int x,int y)
 
 }
 
-void hudai(){
+void hudai()
+{
 	int i;
     haha(4,10);
     b = 0;
@@ -44,12 +45,13 @@ int main()
 		printf("my name is zim");
 		if(MAX<i){
 			printf("Impossible");
+			hudai();
 		}
 	}
 	ajaira();
 	a=b;
 	b=c;
-	hudai();
+
 
 	return 0;
 }
